@@ -1,0 +1,23 @@
+.responsive-container {
+  padding: 0 100px;
+
+  @include media-xs {
+    padding: 0 150px;
+  }
+
+  @include media-sm {
+    padding: 0 250px;
+  }
+
+  @include media-md {
+    padding: 0 400px;
+  }
+
+  @include media-lg {
+    padding: 0 500px;
+  }
+
+  @include media-xl {
+    padding: 0 600px;
+  }
+}

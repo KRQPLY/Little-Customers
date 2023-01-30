@@ -10,5 +10,14 @@
     {
       "path": "./tsconfig.vitest.json"
     }
-  ]
+  ],
+  "compilerOptions": {
+    // "target": "es6",
+    // "module": "commonjs",
+    // "outDir": "dist",
+    // "sourceMap": true,
+    "types": ["node"]
+  },
+  "include": ["src/**/*.ts", "src/**.ts"],
+  // "exclude": ["node_modules"]
 }
