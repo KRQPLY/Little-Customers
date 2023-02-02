@@ -1,11 +1,12 @@
 <template>
   <button type="button" :class="type">
+    <slot></slot>
     {{ label }}
   </button>
 </template>
 
 <script setup lang="ts">
-defineProps<{ label: string; type?: string }>();
+defineProps<{ label?: string; type?: string }>();
 </script>
 
 <style scoped lang="scss">

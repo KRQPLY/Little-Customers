@@ -27,17 +27,14 @@
 import SignForm from "@/components/SignForm.vue";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
-import { auth } from "@/firebase";
-import { onAuthStateChanged } from "@firebase/auth";
-import { useTokenStore } from "@/stores/token";
+import { onAuthStateChanged, getAuth } from "@firebase/auth";
 
-const registered = ref(true);
 const router = useRouter();
-const tokenStore = useTokenStore();
+const registered = ref(true);
+const auth = getAuth();
 
 onAuthStateChanged(auth, (user) => {
   if (user && user.uid) {
-    tokenStore.setToken(user.uid);
     router.push({ name: "home" });
   }
 });

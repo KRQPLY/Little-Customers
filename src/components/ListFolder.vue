@@ -35,6 +35,7 @@ function goToList() {
 
 <style scoped lang="scss">
 .folder {
+  min-height: 160.4px;
   padding: 10px;
   background-color: $color-main;
   border-radius: 10px;
@@ -64,5 +65,11 @@ function goToList() {
   font-size: 20px;
   overflow: hidden;
   color: $color-white;
+}
+
+@include media-xs {
+  .folder {
+    min-height: 190.8px;
+  }
 }
 </style>

@@ -1,12 +1,14 @@
 <template>
   <div class="pick-icon">
-    <img
-      class="icon"
-      :src="url"
-      :alt="url"
-      v-for="url in urls"
-      @click="$emit('picked', url)"
-    />
+    <div class="icons-list scrollable">
+      <img
+        class="icon"
+        :src="url"
+        :alt="url"
+        v-for="url in urls"
+        @click="$emit('picked', url)"
+      />
+    </div>
   </div>
 </template>
 
@@ -48,23 +50,23 @@ listAll(storageRef)
   background-color: $color-white;
   border-radius: 10px;
   padding: 10px;
+}
+.icons-list {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
   gap: 20px;
+  &.scrollable {
+    height: 70vh;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
 }
 .icon {
   width: 50px;
-}
-
-@include media-sm {
-  .pick-icon {
-    grid-template-columns: repeat(9, 1fr);
-  }
-}
-
-@include media-md {
-  .pick-icon {
-    grid-template-columns: repeat(14, 1fr);
-  }
 }
 </style>

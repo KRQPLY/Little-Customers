@@ -1,5 +1,5 @@
 <template>
-  <div class="home-view" v-if="tokenStore.token">
+  <div class="home-view" v-if="isUserLoggedIn">
     <div class="lists">
       <ListFolder
         v-for="list in lists"
@@ -26,27 +26,27 @@ import AddForm from "@/components/AddForm.vue";
 import type List from "@/types/List";
 import { useRouter } from "vue-router";
 import { collection, onSnapshot, query } from "firebase/firestore";
-import { auth, db } from "@/firebase";
-import { onAuthStateChanged } from "@firebase/auth";
-import { useTokenStore } from "@/stores/token";
+import { db } from "@/firebase";
+import { getAuth, onAuthStateChanged } from "@firebase/auth";
 import { ref } from "vue";
 
 const router = useRouter();
-const tokenStore = useTokenStore();
+const auth = getAuth();
+const isUserLoggedIn = ref(false);
 const lists = ref<List[]>([]);
 const isAddListPopupVisible = ref(false);
 
 onAuthStateChanged(auth, (user) => {
   if (!user) {
-    tokenStore.setToken("");
+    isUserLoggedIn.value = false;
     router.push({ name: "login" });
   } else {
-    tokenStore.setToken(user.uid);
+    isUserLoggedIn.value = true;
     watchAndUpdateLists(user.uid);
   }
 });
 
-async function watchAndUpdateLists(uid: string) {
+function watchAndUpdateLists(uid: string) {
   onSnapshot(query(collection(db, "users", uid, "lists")), (querySnapshot) => {
     const listArray: List[] = [];
     querySnapshot.forEach((doc) => {
@@ -77,6 +77,8 @@ async function watchAndUpdateLists(uid: string) {
   height: 180px;
 }
 .add-list-button {
+  box-sizing: content-box;
+  min-height: 160.4px;
   padding: 10px;
   background-color: $color-main;
   border: none;
@@ -90,8 +92,8 @@ async function watchAndUpdateLists(uid: string) {
   .lists {
     grid-template-columns: 1fr 1fr;
   }
-  .skeleton {
-    height: 210px;
+  .add-list-button {
+    min-height: 190.8px;
   }
 }
 @include media-sm {

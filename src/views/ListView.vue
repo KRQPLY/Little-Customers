@@ -1,5 +1,5 @@
 <template>
-  <div class="list" v-if="tokenStore.token">
+  <div class="list" v-if="isUserLoggedIn">
     <div class="items">
       <ItemTile
         v-for="item in items"
@@ -30,12 +30,12 @@ import AddForm from "@/components/AddForm.vue";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { collection, onSnapshot, query } from "firebase/firestore";
-import { auth, db } from "@/firebase";
-import { onAuthStateChanged } from "@firebase/auth";
-import { useTokenStore } from "@/stores/token";
+import { db } from "@/firebase";
+import { onAuthStateChanged, getAuth } from "@firebase/auth";
 
 const router = useRouter();
-const tokenStore = useTokenStore();
+const auth = getAuth();
+const isUserLoggedIn = ref(false);
 const items = ref<Item[]>([]);
 const isAddItemPopupVisible = ref(false);
 
@@ -46,10 +46,10 @@ const id =
 
 onAuthStateChanged(auth, (user) => {
   if (!user) {
-    tokenStore.setToken("");
+    isUserLoggedIn.value = false;
     router.push({ name: "login" });
   } else {
-    tokenStore.setToken(user.uid);
+    isUserLoggedIn.value = true;
     watchAndUpdateItems(user.uid);
   }
 });
@@ -91,6 +91,8 @@ async function watchAndUpdateItems(uid: string) {
   gap: 10px;
 }
 .add-item-button {
+  box-sizing: content-box;
+  min-height: 160.4px;
   padding: 10px;
   background-color: $color-main;
   border: none;
@@ -103,6 +105,9 @@ async function watchAndUpdateItems(uid: string) {
 @include media-xs {
   .items {
     grid-template-columns: 1fr 1fr;
+  }
+  .add-item-button {
+    min-height: 190.8px;
   }
 }
 @include media-sm {

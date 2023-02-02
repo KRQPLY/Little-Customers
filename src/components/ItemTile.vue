@@ -61,6 +61,7 @@ async function toggleBought() {
 
 <style scoped lang="scss">
 .item {
+  min-height: 160.4px;
   padding: 10px;
   background-color: $color-main;
   border-radius: 10px;
@@ -111,5 +112,10 @@ async function toggleBought() {
   font-size: 20px;
   overflow: hidden;
   color: $color-white;
+}
+@include media-xs {
+  .item {
+    min-height: 190.8px;
+  }
 }
 </style>

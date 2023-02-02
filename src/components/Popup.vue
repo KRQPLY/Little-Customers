@@ -7,9 +7,7 @@
   </div>
 </template>
 
-<script setup lang="ts">
-defineProps({ position: { type: String, default: "relative" } });
-</script>
+<script setup lang="ts"></script>
 
 <style scoped lang="scss">
 .popup {
@@ -20,7 +18,6 @@ defineProps({ position: { type: String, default: "relative" } });
   left: 0;
   bottom: 0;
   right: 0;
-  padding: 50px;
 }
 
 .popup-blocker {
@@ -35,7 +32,8 @@ defineProps({ position: { type: String, default: "relative" } });
   backdrop-filter: blur(4px);
 }
 .popup-content {
-  position: v-bind(position);
+  position: fixed;
+  top: 50px;
   height: fit-content;
   z-index: 1000;
 }
