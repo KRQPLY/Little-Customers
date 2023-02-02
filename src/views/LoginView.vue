@@ -27,12 +27,12 @@
 import SignForm from "@/components/SignForm.vue";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
-import { getAuth, onAuthStateChanged } from "@firebase/auth";
+import { auth } from "@/firebase";
+import { onAuthStateChanged } from "@firebase/auth";
 import { useTokenStore } from "@/stores/token";
 
 const registered = ref(true);
 const router = useRouter();
-const auth = getAuth();
 const tokenStore = useTokenStore();
 
 onAuthStateChanged(auth, (user) => {

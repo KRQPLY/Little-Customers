@@ -24,8 +24,8 @@
 <script setup lang="ts">
 import FormField from "@/components/FormField.vue";
 import Button from "@/components/Button.vue";
+import { auth } from "@/firebase";
 import {
-  getAuth,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signInWithPopup,
@@ -41,7 +41,6 @@ const props = defineProps({
   },
 });
 
-const auth = getAuth();
 const googleProvider = new GoogleAuthProvider();
 
 const schema = props.isSignIn
@@ -107,15 +106,5 @@ function signUp() {
   flex-direction: column;
   align-items: center;
   gap: 20px;
-
-  input {
-    width: 100%;
-    box-sizing: border-box;
-    height: 40px;
-    border: 1px solid $color-athens-gray;
-    border-radius: 4px;
-    font-family: Poppins;
-    padding: 10px;
-  }
 }
 </style>

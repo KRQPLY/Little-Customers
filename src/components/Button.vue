@@ -14,7 +14,7 @@ button {
   border: none;
   border-radius: 4px;
   width: 100%;
-  background-color: $color-orange;
+  background-color: $color-main;
   font-family: Poppins;
   color: $color-white;
 
@@ -24,6 +24,9 @@ button {
   }
   &.google {
     background-color: $color-google-blue;
+  }
+  &.secondary {
+    background-color: $color-deep-koamaru;
   }
 }
 </style>
