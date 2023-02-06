@@ -38,6 +38,7 @@ import FormField from "@/components/FormField.vue";
 import Button from "@/components/Button.vue";
 import PickIcon from "@/components/PickIcon.vue";
 import Popup from "./Popup.vue";
+import { useUserStore } from "@/stores/useUserStore";
 import { collection, addDoc } from "firebase/firestore";
 import { auth, db } from "@/firebase";
 import { useForm } from "vee-validate";
@@ -47,6 +48,7 @@ import { ref } from "vue";
 const emits = defineEmits(["added"]);
 const props = defineProps<{ id?: string }>();
 
+const userStore = useUserStore();
 const isIconPopupVisible = ref(false);
 const iconUrl = ref("");
 const iconErrorMessage = ref("");
@@ -96,11 +98,13 @@ async function addItemOrList() {
   if (!auth?.currentUser?.uid) {
     return;
   }
-  const collectionArgs = ["users", auth.currentUser.uid, "lists"];
+  const collectionArgs = ["lists"];
   const collectionAttrs: {
     name: string;
     description: string;
     iconUrl: string;
+    owner?: string;
+    users?: string[];
     quantity?: number;
     bought?: boolean;
   } = {
@@ -113,10 +117,16 @@ async function addItemOrList() {
     collectionArgs.push("items");
     collectionAttrs.quantity = values.quantity;
     collectionAttrs.bought = false;
+  } else {
+    collectionAttrs.users = [auth.currentUser.uid].concat([
+      ...userStore.parents.map((parent) => parent.uid),
+      ...userStore.children.map((child) => child.uid),
+    ]);
+    collectionAttrs.owner = auth.currentUser.uid;
   }
   if (!Object.keys(errors.value).length) {
-    await addDoc(collection(db, collectionArgs.join("/")), collectionAttrs);
     emits("added");
+    await addDoc(collection(db, collectionArgs.join("/")), collectionAttrs);
   }
 }
 </script>

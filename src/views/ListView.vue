@@ -29,7 +29,14 @@ import IconAddItem from "@/components/icons/IconAddItem.vue";
 import AddForm from "@/components/AddForm.vue";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
-import { collection, onSnapshot, query } from "firebase/firestore";
+import {
+  collection,
+  onSnapshot,
+  query,
+  where,
+  doc,
+  getDoc,
+} from "firebase/firestore";
 import { db } from "@/firebase";
 import { onAuthStateChanged, getAuth } from "@firebase/auth";
 
@@ -59,9 +66,10 @@ async function watchAndUpdateItems(uid: string) {
     router.push({ name: "home" });
     return;
   }
-  onSnapshot(
-    query(collection(db, "users", uid, "lists", id, "items")),
-    (querySnapshot) => {
+  const docRef = doc(db, "lists", id);
+  const docSnap = await getDoc(docRef);
+  if (docSnap.exists() && docSnap.data().users.includes(uid)) {
+    onSnapshot(query(collection(db, "lists", id, "items")), (querySnapshot) => {
       const itemArray: Item[] = [];
       querySnapshot.forEach((doc) => {
         const item: Item = {
@@ -75,8 +83,10 @@ async function watchAndUpdateItems(uid: string) {
         itemArray.push(item);
       });
       items.value = itemArray;
-    }
-  );
+    });
+  } else {
+    router.push({ name: "home" });
+  }
 }
 </script>
 
@@ -101,6 +111,9 @@ async function watchAndUpdateItems(uid: string) {
   display: flex;
   justify-content: center;
   align-items: center;
+  &:hover {
+    opacity: 0.9;
+  }
 }
 @include media-xs {
   .items {

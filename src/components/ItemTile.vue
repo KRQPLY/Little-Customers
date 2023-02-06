@@ -2,10 +2,10 @@
   <div class="item" @click="toggleBought">
     <div class="main">
       <img
-        :src="iconUrl"
-        :alt="iconUrl"
-        class="icon"
-        @load="isIconLoaded = true"
+      :src="iconUrl"
+      :alt="iconUrl"
+      class="icon"
+      @load="isIconLoaded = true"
       />
       <div class="icon-placeholder" v-if="!isIconLoaded"></div>
       <div class="info">
@@ -44,15 +44,7 @@ async function toggleBought() {
   if (!auth?.currentUser?.uid) {
     return;
   }
-  const itemRef = doc(
-    db,
-    "users",
-    auth.currentUser.uid,
-    "lists",
-    props.listId,
-    "items",
-    props.id
-  );
+  const itemRef = doc(db, "lists", props.listId, "items", props.id);
   await updateDoc(itemRef, {
     bought: !props.bought,
   });
@@ -66,6 +58,10 @@ async function toggleBought() {
   background-color: $color-main;
   border-radius: 10px;
   cursor: pointer;
+
+  &:hover {
+    opacity: 0.9;
+  }
 }
 .main {
   position: relative;

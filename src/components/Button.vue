@@ -1,6 +1,5 @@
 <template>
   <button type="button" :class="type">
-    <slot></slot>
     {{ label }}
   </button>
 </template>
@@ -11,7 +10,7 @@ defineProps<{ label?: string; type?: string }>();
 
 <style scoped lang="scss">
 button {
-  height: 40px;
+  padding: 10px;
   border: none;
   border-radius: 4px;
   width: 100%;
@@ -28,6 +27,15 @@ button {
   }
   &.secondary {
     background-color: $color-deep-koamaru;
+  }
+  &.accept {
+    padding: 5px 7px;
+    width: auto;
+  }
+  &.delete {
+    padding: 5px 7px;
+    background-color: $color-deep-koamaru;
+    width: auto;
   }
 }
 </style>

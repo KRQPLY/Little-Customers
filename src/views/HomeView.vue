@@ -8,7 +8,11 @@
         :iconUrl="list.iconUrl"
         :description="list.description"
       />
-      <button class="add-list-button" @click="isAddListPopupVisible = true">
+      <button
+        class="add-list-button"
+        @click="isAddListPopupVisible = true"
+        v-if="userStore.userTag"
+      >
         <IconAddList />
       </button>
     </div>
@@ -25,13 +29,15 @@ import Popup from "@/components/Popup.vue";
 import AddForm from "@/components/AddForm.vue";
 import type List from "@/types/List";
 import { useRouter } from "vue-router";
-import { collection, onSnapshot, query } from "firebase/firestore";
+import { useUserStore } from "@/stores/useUserStore";
+import { collection, onSnapshot, query, where } from "firebase/firestore";
 import { db } from "@/firebase";
 import { getAuth, onAuthStateChanged } from "@firebase/auth";
 import { ref } from "vue";
 
-const router = useRouter();
 const auth = getAuth();
+const router = useRouter();
+const userStore = useUserStore();
 const isUserLoggedIn = ref(false);
 const lists = ref<List[]>([]);
 const isAddListPopupVisible = ref(false);
@@ -47,19 +53,22 @@ onAuthStateChanged(auth, (user) => {
 });
 
 function watchAndUpdateLists(uid: string) {
-  onSnapshot(query(collection(db, "users", uid, "lists")), (querySnapshot) => {
-    const listArray: List[] = [];
-    querySnapshot.forEach((doc) => {
-      const list: List = {
-        id: doc.id,
-        name: doc.data().name,
-        iconUrl: doc.data().iconUrl,
-        description: doc.data().description,
-      };
-      listArray.push(list);
-    });
-    lists.value = listArray;
-  });
+  onSnapshot(
+    query(collection(db, "lists"), where("users", "array-contains", uid)),
+    (querySnapshot) => {
+      const listArray: List[] = [];
+      querySnapshot.forEach((doc) => {
+        const list: List = {
+          id: doc.id,
+          name: doc.data().name,
+          iconUrl: doc.data().iconUrl,
+          description: doc.data().description,
+        };
+        listArray.push(list);
+      });
+      lists.value = listArray;
+    }
+  );
 }
 </script>
 
@@ -87,6 +96,9 @@ function watchAndUpdateLists(uid: string) {
   display: flex;
   justify-content: center;
   align-items: center;
+  &:hover {
+    opacity: 0.9;
+  }
 }
 @include media-xs {
   .lists {

@@ -68,5 +68,6 @@ listAll(storageRef)
 }
 .icon {
   width: 50px;
+  cursor: pointer;
 }
 </style>

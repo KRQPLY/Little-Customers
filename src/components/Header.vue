@@ -5,55 +5,36 @@
       <div>Customers</div>
     </div>
     <div class="buttons">
-      <div v-if="isUserLoggedIn" class="nick" @click="isSettingsActive = true">
-        {{ nick }}
+      <div
+        v-if="userStore.isLoggedIn"
+        class="nick"
+        @click="isSettingsActive = true"
+      >
+        {{ userStore.nick ? userStore.nick : "Settings" }}
       </div>
-      <Popup @close="isSettingsActive = false" v-if="isSettingsActive">
-        hi
+      <Popup
+        @close="isSettingsActive = false"
+        v-if="isSettingsActive"
+      >
+        <Settings @close="isSettingsActive = false" />
       </Popup>
-      <div v-if="isUserLoggedIn" class="logout" @click="logout">Logout</div>
     </div>
   </header>
 </template>
 
 <script setup lang="ts">
-import Popup from "./Popup.vue";
-import { getAuth, signOut, onAuthStateChanged } from "@firebase/auth";
-import { onSnapshot, doc } from "firebase/firestore";
-import { db } from "@/firebase";
-import { ref } from "vue";
+import Popup from "@/components/Popup.vue";
+import Settings from "@/components/Settings.vue";
 import { useRouter } from "vue-router";
+import { useUserStore } from "@/stores/useUserStore";
+import { ref } from "vue";
 
-const auth = getAuth();
 const router = useRouter();
-const isUserLoggedIn = ref(false);
-const nick = ref("");
+const userStore = useUserStore();
 const isSettingsActive = ref(false);
 
-onAuthStateChanged(auth, (user) => {
-  if (!user) {
-    isUserLoggedIn.value = false;
-  } else {
-    isUserLoggedIn.value = true;
-    watchAndUpdateLists(user.uid);
-  }
-});
-
-function goHome() {
+function goHome(){
   router.push({ name: "home" });
-}
-
-function logout() {
-  signOut(auth);
-}
-
-function watchAndUpdateLists(uid: string) {
-  onSnapshot(doc(db, "users", uid), (doc) => {
-    const data = doc.data();
-    if (data) {
-      nick.value = data.nick;
-    }
-  });
 }
 </script>
 
@@ -83,6 +64,9 @@ header {
     cursor: pointer;
     color: $color-white;
     font-weight: 500;
+    &:hover {
+      opacity: 0.9;
+    }
   }
 }
 </style>

@@ -40,6 +40,10 @@ function goToList() {
   background-color: $color-main;
   border-radius: 10px;
   cursor: pointer;
+
+  &:hover {
+    opacity: 0.9;
+  }
 }
 .folder-main {
   position: relative;
