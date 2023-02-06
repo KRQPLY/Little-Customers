@@ -39,8 +39,8 @@ export const useUserStore = defineStore("user", () => {
         if (data && user.uid === uid.value) {
           nick.value = data.nick ? data.nick : "";
           userTag.value = data.userTag ? data.userTag : "";
-          children.value = data.children ? data.children : [];
           parents.value = data.parents ? data.parents : [];
+          children.value = data.children ? data.children : [];
           parentsRequests.value = data.parentsRequests
             ? data.parentsRequests
             : [];
