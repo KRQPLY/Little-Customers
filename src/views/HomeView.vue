@@ -34,10 +34,12 @@ import { collection, onSnapshot, query, where } from "firebase/firestore";
 import { db } from "@/firebase";
 import { getAuth, onAuthStateChanged } from "@firebase/auth";
 import { ref } from "vue";
+import { useI18n } from "vue-i18n";
 
 const auth = getAuth();
 const router = useRouter();
 const userStore = useUserStore();
+const { locale } = useI18n();
 const isUserLoggedIn = ref(false);
 const lists = ref<List[]>([]);
 const isAddListPopupVisible = ref(false);
@@ -45,7 +47,7 @@ const isAddListPopupVisible = ref(false);
 onAuthStateChanged(auth, (user) => {
   if (!user) {
     isUserLoggedIn.value = false;
-    router.push({ name: "login" });
+    router.push({ path: `/${locale.value}/login` });
   } else {
     isUserLoggedIn.value = true;
     watchAndUpdateLists(user.uid);

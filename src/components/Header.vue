@@ -10,12 +10,9 @@
         class="nick"
         @click="isSettingsActive = true"
       >
-        {{ userStore.nick ? userStore.nick : "Settings" }}
+        {{ userStore.nick ? userStore.nick : $t("settings.settings") }}
       </div>
-      <Popup
-        @close="isSettingsActive = false"
-        v-if="isSettingsActive"
-      >
+      <Popup @close="isSettingsActive = false" v-if="isSettingsActive">
         <Settings @close="isSettingsActive = false" />
       </Popup>
     </div>
@@ -28,13 +25,15 @@ import Settings from "@/components/Settings.vue";
 import { useRouter } from "vue-router";
 import { useUserStore } from "@/stores/useUserStore";
 import { ref } from "vue";
+import { useI18n } from "vue-i18n";
 
+const { locale } = useI18n();
 const router = useRouter();
 const userStore = useUserStore();
 const isSettingsActive = ref(false);
 
-function goHome(){
-  router.push({ name: "home" });
+function goHome() {
+  router.push({ path: `/${locale.value}` });
 }
 </script>
 

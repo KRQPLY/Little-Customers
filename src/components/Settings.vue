@@ -1,31 +1,31 @@
 <template>
   <div class="settings">
-    <h3>Settings</h3>
+    <h3>{{ $t("settings.settings") }}</h3>
     <div v-if="userStore.userTag">{{ userStore.userTag }}</div>
-    <input v-model="nick" placeholder="Nickname" v-else />
+    <input v-model="nick" :placeholder="$t('settings.nickname')" v-else />
     <RelativesList
       :relatives="userStore.children"
       :relatives-requests="userStore.childrenRequests"
-      type="children"
+      relative="child"
       v-if="userStore.userTag"
     />
     <Button
-      label="Add a child"
+      :label="$t('settings.addAChild')"
       @click="showAddRelativePopup('child')"
       v-if="userStore.userTag"
     />
     <RelativesList
       :relatives="userStore.parents"
       :relatives-requests="userStore.parentsRequests"
-      type="parents"
+      relative="parent"
       v-if="userStore.userTag"
     />
     <Button
-      label="Add a parent"
+      :label="$t('settings.addAParent')"
       @click="showAddRelativePopup('parent')"
       v-if="userStore.userTag"
     />
-    <Button label="Set a nickname" @click="setNick" v-else />
+    <Button :label="$t('settings.setANickname')" @click="setNick" v-else />
     <Popup
       @close="isAddRelativePopupVisible = false"
       v-if="isAddRelativePopupVisible"
@@ -38,7 +38,7 @@
 
     <Button
       class="logout-button"
-      label="Logout"
+      :label="$t('settings.logout')"
       type="secondary"
       @click="logout"
     />

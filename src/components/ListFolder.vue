@@ -17,6 +17,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { useRouter } from "vue-router";
+import { useI18n } from "vue-i18n";
 
 const props = defineProps<{
   name: string;
@@ -25,11 +26,12 @@ const props = defineProps<{
   description: string;
 }>();
 
+const { locale } = useI18n();
 const router = useRouter();
 const isIconLoaded = ref(false);
 
 function goToList() {
-  router.push({ name: "list", query: { id: props.id } });
+  router.push({ path: `/${locale.value}/list`, query: { id: props.id } });
 }
 </script>
 

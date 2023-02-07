@@ -7,14 +7,14 @@
           :class="{ active: !registered }"
           @click="registered = false"
         >
-          Sign Up
+          {{ $t("login.signUp") }}
         </button>
         <button
           class="sign-in-button"
           :class="{ active: registered }"
           @click="registered = true"
         >
-          Sign In
+          {{ $t("login.signIn") }}
         </button>
       </header>
       <SignForm v-if="!registered" />
@@ -28,14 +28,16 @@ import SignForm from "@/components/SignForm.vue";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { onAuthStateChanged, getAuth } from "@firebase/auth";
+import { useI18n } from "vue-i18n";
 
+const { locale } = useI18n();
 const router = useRouter();
 const registered = ref(true);
 const auth = getAuth();
 
 onAuthStateChanged(auth, (user) => {
   if (user && user.uid) {
-    router.push({ name: "home" });
+    router.push({ path: `/${locale.value}` });
   }
 });
 </script>

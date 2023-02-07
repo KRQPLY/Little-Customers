@@ -1,18 +1,18 @@
 <template>
   <div class="relatives">
     <div class="relatives-header">
-      {{ type.charAt(0).toUpperCase() + type.slice(1) }}
+      {{ relative === "parent" ? $t("settings.parents") : $t("settings.children") }}
     </div>
     <div class="relatives-list">
       <div class="request" v-for="request in relativesRequests">
         <div class="request-user-tag">@{{ request.userTag }}</div>
         <Button
-          label="accept"
+          :label="$t('settings.accept')"
           type="accept"
           @click="acceptRequest(request.nick, request.userTag, request.uid)"
         />
         <Button
-          label="delete"
+          :label="$t('settings.delete')"
           type="delete"
           @click="deleteRequest(request.nick, request.userTag, request.uid)"
         />
@@ -21,13 +21,17 @@
         <div class="relative-nick">{{ relative.nick }}</div>
         <div class="relative-user-tag">@{{ relative.userTag }}</div>
         <Button
-          label="delete"
+          :label="$t('settings.delete')"
           type="delete"
           @click="deleteRelative(relative.nick, relative.userTag, relative.uid)"
         />
       </div>
       <div v-if="!relatives.length && !relativesRequests.length">
-        No {{ type }}
+        {{
+          relative === "parent"
+            ? $t("settings.noParents")
+            : $t("settings.noChildren")
+        }}
       </div>
     </div>
   </div>
@@ -51,7 +55,7 @@ import { db } from "@/firebase";
 const props = defineProps<{
   relatives: { nick: string; userTag: string; uid: string }[];
   relativesRequests: { nick: string; userTag: string; uid: string }[];
-  type: "parents" | "children";
+  relative: "parent" | "child";
 }>();
 
 const userStore = useUserStore();
@@ -59,7 +63,7 @@ const userStore = useUserStore();
 function deleteRelative(nick: string, userTag: string, uid: string) {
   let userData = {};
   let relativeData = {};
-  if (props.type === "children") {
+  if (props.relative === "child") {
     userData = {
       children: arrayRemove({ nick, userTag, uid }),
     };
@@ -71,7 +75,7 @@ function deleteRelative(nick: string, userTag: string, uid: string) {
       }),
     };
   }
-  if (props.type === "parents") {
+  if (props.relative === "parent") {
     userData = {
       parents: arrayRemove({ nick, userTag, uid }),
     };
@@ -108,7 +112,7 @@ async function stopSharingLists(uid: string) {
 function acceptRequest(nick: string, userTag: string, uid: string) {
   let userData = {};
   let relativeData = {};
-  if (props.type === "children") {
+  if (props.relative === "child") {
     userData = {
       children: arrayUnion({ nick, userTag, uid }),
     };
@@ -120,7 +124,7 @@ function acceptRequest(nick: string, userTag: string, uid: string) {
       }),
     };
   }
-  if (props.type === "parents") {
+  if (props.relative === "parent") {
     userData = {
       parents: arrayUnion({ nick, userTag, uid }),
     };
@@ -147,7 +151,7 @@ function deleteRequest(nick: string, userTag: string, uid: string) {
       uid: userStore.uid,
     }),
   };
-  if (props.type === "children") {
+  if (props.relative === "child") {
     userData = {
       childrenRequests: arrayRemove({
         nick,
@@ -156,7 +160,7 @@ function deleteRequest(nick: string, userTag: string, uid: string) {
       }),
     };
   }
-  if (props.type === "parents") {
+  if (props.relative === "parent") {
     userData = {
       parentsRequests: arrayRemove({
         nick,
