@@ -1,7 +1,13 @@
 <template>
   <div class="add-relative">
-    <h1>Add a {{ relative }}</h1>
-    <input v-model="userTag" placeholder="Search" />
+    <h1>
+      {{
+        relative === "parent"
+          ? $t("settings.addAParent")
+          : $t("settings.addAChild")
+      }}
+    </h1>
+    <input v-model="userTag" :placeholder="$t('settings.search')" />
     <div class="results">
       <div
         class="result"
@@ -11,7 +17,7 @@
         <div class="result-nick">{{ result.nick }}</div>
         <div class="result-user-tag">@{{ result.userTag }}</div>
       </div>
-      <div v-if="!filteredResults.length">No results</div>
+      <div v-if="!filteredResults.length">{{ $t("settings.noResults") }}</div>
     </div>
   </div>
 </template>

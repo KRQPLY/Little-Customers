@@ -1,24 +1,29 @@
 <template>
   <div class="add">
-    <h1>Add {{ id ? "item" : "list" }}</h1>
-    <FormField name="name" type="text" placeholder="Name" secondary />
+    <h1>{{ id ? $t("addForm.addItem") : $t("addForm.addList") }}</h1>
+    <FormField
+      name="name"
+      type="text"
+      :placeholder="$t('addForm.name')"
+      secondary
+    />
     <FormField
       name="description"
       type="textarea"
-      placeholder="Description"
+      :placeholder="$t('addForm.description')"
       secondary
     />
     <FormField
       name="quantity"
       type="number"
-      placeholder="Number"
+      :placeholder="$t('addForm.number')"
       secondary
       v-if="id"
     />
     <img class="icon" :src="iconUrl" :alt="iconUrl" v-if="iconUrl" />
     <div class="button-icon-section">
       <Button
-        label="Pick icon"
+        :label="$t('addForm.pickIcon')"
         type="secondary"
         @click="isIconPopupVisible = true"
       />
@@ -29,7 +34,10 @@
     <Popup v-if="isIconPopupVisible" @close="isIconPopupVisible = false">
       <PickIcon @picked="handleIconPick" />
     </Popup>
-    <Button :label="`Add ${id ? 'item' : 'list'}`" @click="addItemOrList" />
+    <Button
+      :label="id ? $t('addForm.addItem') : $t('addForm.addList')"
+      @click="addItemOrList"
+    />
   </div>
 </template>
 
@@ -44,11 +52,13 @@ import { auth, db } from "@/firebase";
 import { useForm } from "vee-validate";
 import * as yup from "yup";
 import { ref } from "vue";
+import { useI18n } from "vue-i18n";
 
 const emits = defineEmits(["added"]);
 const props = defineProps<{ id?: string }>();
 
 const userStore = useUserStore();
+const { t } = useI18n();
 const isIconPopupVisible = ref(false);
 const iconUrl = ref("");
 const iconErrorMessage = ref("");
@@ -57,29 +67,29 @@ const schema = !props.id
   ? yup.object({
       name: yup
         .string()
-        .required("Field is required")
-        .max(20, "Name cannot be longer than 20 characters"),
+        .required(t("validation.fieldIsRequired"))
+        .max(20, t("validation.cannotBeLongerThan", { number: "20" })),
       description: yup
         .string()
-        .required("Field is required")
-        .max(80, "Description cannot be longer than 80 characters"),
+        .required(t("validation.fieldIsRequired"))
+        .max(80, t("validation.cannotBeLongerThan", { number: "80" })),
     })
   : yup.object({
       name: yup
         .string()
-        .required("Field is required")
-        .max(20, "Name cannot be longer than 20 characters"),
+        .required(t("validation.fieldIsRequired"))
+        .max(20, t("validation.cannotBeLongerThan", { number: "20" })),
       description: yup
         .string()
-        .required("Field is required")
-        .max(80, "Description cannot be longer than 80 characters"),
+        .required(t("validation.fieldIsRequired"))
+        .max(80, t("validation.cannotBeLongerThan", { number: "80" })),
       quantity: yup
         .number()
         .typeError("Quantity must be a number")
-        .required("Field is required"),
+        .required(t("validation.fieldIsRequired")),
     });
 
-const { errors, values } = useForm({
+const { values, validate } = useForm({
   validationSchema: schema,
 });
 
@@ -90,9 +100,9 @@ function handleIconPick(url: string) {
 }
 
 async function addItemOrList() {
+  const validation = await validate();
   if (!iconUrl.value) {
-    iconErrorMessage.value = "Choose an icon";
-
+    iconErrorMessage.value = t("validation.selectAnIcon");
     return;
   }
   if (!auth?.currentUser?.uid) {
@@ -124,7 +134,7 @@ async function addItemOrList() {
     ]);
     collectionAttrs.owner = auth.currentUser.uid;
   }
-  if (!Object.keys(errors.value).length) {
+  if (validation.valid) {
     emits("added");
     await addDoc(collection(db, collectionArgs.join("/")), collectionAttrs);
   }

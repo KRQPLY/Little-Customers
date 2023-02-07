@@ -1,23 +1,27 @@
 <template>
   <div class="sign-in">
-    <h1>{{ isSignIn ? "Sign In" : "Sign Up" }}</h1>
-    <FormField name="email" type="email" placeholder="Email" />
-    <FormField name="password" type="password" placeholder="Password" />
+    <h1>{{ isSignIn ? $t("login.signIn") : $t("login.signUp") }}</h1>
+    <FormField name="email" type="email" :placeholder="$t('login.email')" />
+    <FormField
+      name="password"
+      type="password"
+      :placeholder="$t('login.password')"
+    />
     <FormField
       name="confirmedPassword"
       type="password"
-      placeholder="Confirm Password"
+      :placeholder="$t('login.confirmPassword')"
       v-if="!isSignIn"
     />
 
-    <Button @click="signIn" label="Sign in" v-if="isSignIn" />
+    <Button @click="signIn" :label="$t('login.signIn')" v-if="isSignIn" />
     <Button
       @click="signWithGoogle"
-      label="Sign in with Google"
+      :label="$t('login.signInWithGoogle')"
       type="google"
       v-if="isSignIn"
     />
-    <Button @click="signUp" label="Sign up" v-else />
+    <Button @click="signUp" :label="$t('login.signUp')" v-else />
   </div>
 </template>
 
@@ -33,6 +37,7 @@ import {
 } from "firebase/auth";
 import { useForm } from "vee-validate";
 import * as yup from "yup";
+import { useI18n } from "vue-i18n";
 
 const props = defineProps({
   isSignIn: {
@@ -42,36 +47,37 @@ const props = defineProps({
 });
 
 const googleProvider = new GoogleAuthProvider();
+const { t } = useI18n();
 
 const schema = props.isSignIn
   ? yup.object({
       email: yup
         .string()
-        .required("Field is required")
-        .email("Field must be a valid email"),
-      password: yup.string().required("Field is required"),
+        .required(t("validation.fieldIsRequired"))
+        .email(t("validation.fieldMustBeAValidEmail")),
+      password: yup.string().required(t("validation.fieldIsRequired")),
     })
   : yup.object({
       email: yup
         .string()
-        .required("Field is required")
-        .email("Field must be a valid email"),
+        .required(t("validation.fieldIsRequired"))
+        .email(t("validation.fieldMustBeAValidEmail")),
       password: yup
         .string()
-        .required("Field is required")
-        .min(8, "Password must contain at least 8 characters"),
+        .required(t("validation.fieldIsRequired"))
+        .min(8, t("validation.passwordMustConatinAtLeast", { number: "8" })),
     });
 
-const { errors, values, setFieldError } = useForm({
+const { errors, values, setFieldError, validate } = useForm({
   validationSchema: schema,
 });
 
-function signIn() {
-  if (!Object.keys(errors.value).length) {
+async function signIn() {
+  const validation = await validate();
+  if (validation.valid) {
     signInWithEmailAndPassword(auth, values.email, values.password).catch(
       (error) => {
         console.error(error.code);
-        alert(error.message);
       }
     );
   }
@@ -80,19 +86,18 @@ function signIn() {
 function signWithGoogle() {
   signInWithPopup(auth, googleProvider).catch((error) => {
     console.error(error.code);
-    alert(error.message);
   });
 }
 
-function signUp() {
+async function signUp() {
+  const validation = await validate();
   if (values.confirmedPassword !== values.password) {
-    setFieldError("confirmedPassword", "Passwords don't match");
+    setFieldError("confirmedPassword", t("validation.passwordsDontMatch"));
   }
-  if (!Object.keys(errors.value).length) {
+  if (validation.valid) {
     createUserWithEmailAndPassword(auth, values.email, values.password).catch(
       (error) => {
         console.error(error.code);
-        alert(error.message);
       }
     );
   }

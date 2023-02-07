@@ -39,7 +39,9 @@ import {
 } from "firebase/firestore";
 import { db } from "@/firebase";
 import { onAuthStateChanged, getAuth } from "@firebase/auth";
+import { useI18n } from "vue-i18n";
 
+const { locale } = useI18n();
 const router = useRouter();
 const auth = getAuth();
 const isUserLoggedIn = ref(false);
@@ -54,7 +56,7 @@ const id =
 onAuthStateChanged(auth, (user) => {
   if (!user) {
     isUserLoggedIn.value = false;
-    router.push({ name: "login" });
+    router.push({ path: `/${locale.value}/login` });
   } else {
     isUserLoggedIn.value = true;
     watchAndUpdateItems(user.uid);
@@ -63,7 +65,7 @@ onAuthStateChanged(auth, (user) => {
 
 async function watchAndUpdateItems(uid: string) {
   if (!id) {
-    router.push({ name: "home" });
+    router.push({ path: `/${locale.value}` });
     return;
   }
   const docRef = doc(db, "lists", id);
@@ -85,7 +87,7 @@ async function watchAndUpdateItems(uid: string) {
       items.value = itemArray;
     });
   } else {
-    router.push({ name: "home" });
+    router.push({ path: `/${locale.value}` });
   }
 }
 </script>
