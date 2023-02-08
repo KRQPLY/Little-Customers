@@ -10,7 +10,7 @@
     />
     <textarea
       :class="{ secondary: secondary }"
-      v-model="(value as string)"
+      v-model="value"
       :placeholder="secondary ? '' : placeholder"
       rows="3"
       v-else
@@ -43,7 +43,7 @@ const props = defineProps({
 
 const nameRef = toRef(props, "name");
 
-const { errorMessage, value } = useField(nameRef);
+const { value, errorMessage } = useField<string>(nameRef);
 </script>
 
 <stye scoped lang="scss">
