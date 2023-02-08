@@ -1,6 +1,6 @@
 # little-customers
 
-###### Feel free to checkout the app here
+###### Feel free to check out the app here
 [CLICK](https://little-customers.web.app/en-US/login)
 
 ### This template should help get you started developing with Vue 3 in Vite.
